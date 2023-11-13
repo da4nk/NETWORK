@@ -1,0 +1,11 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+{% if user.is_authenticated %}
+    <form action="{% url 'likes' %}" method = "post">
+        <input type="text">
+        <button class= "btn btn-primary" type="submit">Post</button>
+    </form>
+    {% endif %}
+{% endblock %}
