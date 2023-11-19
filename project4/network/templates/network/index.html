@@ -3,9 +3,30 @@
 {% block body %}
 
 {% if user.is_authenticated %}
-    <form action="{% url 'likes' %}" method = "post">
-        <input type="text">
+    <form action="{% url 'create'  %}" method = "post">
+        {% csrf_token %}
+
+        <input name = "post_content" type="text">
         <button class= "btn btn-primary" type="submit">Post</button>
     </form>
+
+    Post:
+    <div>
+        {% for posts in post %}
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+      
+            
+            <div class="card-body">
+              <a href="#" class="card-link"></a>
+              <a href="#" class="card-link">Another link</a>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
     {% endif %}
-{% endblock %}
+{% endblock %} 
