@@ -3,29 +3,27 @@
 {% block body %}
 
 {% if user.is_authenticated %}
+<div class = "p-4">
     <form action="{% url 'create'  %}" method = "post">
         {% csrf_token %}
 
         <input name = "post_content" type="text">
         <button class= "btn btn-primary" type="submit">Post</button>
     </form>
-
-    Post:
-    <div>
+</div>
+    <div class = "p-4">
         {% for posts in post %}
-        <div class="card" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-      
-            
-            <div class="card-body">
-              <a href="#" class="card-link"></a>
-              <a href="#" class="card-link">Another link</a>
-            </div>
+        <div  class="card text-center">
+          <div class="card-header">
+            {{ posts.user }}
           </div>
+          <div class="card-body">
+            <h5 class="card-title"> {{ posts.text }}</h5>
+          </div>
+          <div class="card-footer text-body-secondary">
+              {{ posts.date }}
+          </div>
+        </div>
         {% endfor %}
     </div>
     {% endif %}

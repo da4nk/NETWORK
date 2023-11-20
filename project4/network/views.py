@@ -11,7 +11,11 @@ from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html")
+    posts = Post.objects.all()
+    return render(request, "network/index.html", 
+                  {
+                      "post": posts
+                  })
 
 
 def login_view(request):
@@ -67,19 +71,18 @@ def register(request):
 
 
 class Create_post(View):
-    template_name = "templates/index.html"
+    template_name = "network/index.html"
 
 
     def post(self, request):
-        post_model = Post.objects.all()
+        post_model = Post()
 
         post_content = request.POST.get('post_content')
-        post_model.create(user = request.user, text = post_content)
-        post_model.save()
-        return render(request, "network/index.html",
-                      {
-                          "post": post_model
-                      })
+        post_model = Post(user = request.user, text = post_content)
+        return HttpResponseRedirect(index)
+    def redirect(self, request):
+        return HttpResponse('index')
+    
 
 class Likes_View(View):
     template_name = 'templates/index.html'
