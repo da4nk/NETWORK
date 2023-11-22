@@ -80,8 +80,6 @@ class Create_post(View):
         post_content = request.POST.get('post_content')
         post_model = Post(user = request.user, text = post_content)
         return HttpResponseRedirect(index)
-    def redirect(self, request):
-        return HttpResponse('index')
     
 
 class Likes_View(View):
