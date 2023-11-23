@@ -11,7 +11,9 @@ from .models import User, Post
 
 
 def index(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-date')
+    
+    
     return render(request, "network/index.html", 
                   {
                       "post": posts
@@ -78,9 +80,8 @@ class Create_post(View):
         post_model = Post()
 
         post_content = request.POST.get('post_content')
-        post_model = Post(user = request.user, text = post_content)
-        return HttpResponseRedirect(index)
-    
+        post_model = Post.objects.create(user = request.user, text = post_content)
+        return index(request)
 
 class Likes_View(View):
     template_name = 'templates/index.html'

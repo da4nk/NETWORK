@@ -11,6 +11,6 @@ class Post(models.Model):
     text = models.TextField(max_length=300)
     date = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name="post")
-    
-
+    def sort(self):
+        return self.Post.order_by("date")
 
