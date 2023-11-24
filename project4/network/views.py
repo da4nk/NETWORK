@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
+from django.contrib.auth.decorators import login_required
 
 
 from .models import User, Post
@@ -75,12 +76,13 @@ def register(request):
 class Create_post(View):
     template_name = "network/index.html"
 
-
+    @login_required
     def post(self, request):
         post_model = Post()
 
         post_content = request.POST.get('post_content')
-        post_model = Post.objects.create(user = request.user, text = post_content)
+        user = User.objects.filter(username = request.user.username)
+        Post.objects.create(user = user, text = post_content)
         return index(request)
 
 class Likes_View(View):

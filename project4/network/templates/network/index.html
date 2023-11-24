@@ -3,13 +3,21 @@
 {% block body %}
 
 {% if user.is_authenticated %}
-<div class = "p-4">
+<div class = "card p-4">
+  
     <form action="{% url 'create'  %}" method = "post">
         {% csrf_token %}
+        <div class="card-body">
+          <div class="form-floating">
 
-        <input name = "post_content" type="text">
+          <label for="floatingTextarea2">New Post</label>
+
+          <input placeholder="Share a thought" class = "form-control" name = "post_content" type="text" style="height: 100px">
+        </div>
         <button class= "btn btn-primary" type="submit">Post</button>
-    </form>
+        </div>
+   
+      </form>
 </div>
     <div class = "p-">
         {% for posts in post %}
