@@ -4,13 +4,19 @@ import datetime
 
 
 class User(AbstractUser):
-    liked_post = models.ManyToManyField("Post", related_name="liked_users", blank=True)
+    liked_post = models.ManyToManyField('Post', related_name="liked_users", blank=True)
+    posts = models.ForeignKey('Post', related_name="user_posts", blank = True)
+    following = models.ManyToManyField("self", related_name="followers", symmetrical=False, blank=True)
+    
+
 
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = "profile")
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
     text = models.TextField(max_length=300)
     date = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, related_name="post")
-    def sort(self):
-        return self.Post.order_by("date")
+    def count_likes(self):
+        return self.likes.count()
+
+
 

@@ -18,21 +18,24 @@
         </div>
    
       </form>
+    {% endif %}
+
 </div>
-    <div class = "p-">
         {% for posts in post %}
-        <div  class="card text-center">
+        <div class="card w-75 mb-3 m-4 ">
           <div class="card-header">
-            {{ posts.user }}
+            <h2>{{posts.user}}</h2>
           </div>
           <div class="card-body">
-            <h5 class="card-title"> {{ posts.text }}</h5>
+            <h5 class="card-title"> {{posts.text}}</h5>
+            <p class="card-text"> Posted {{posts.date}}</p>
+            <i class="fa-regular fa-heart"></i> {{posts.count_likes}}
+            
           </div>
           <div class="card-footer text-body-secondary">
-              {{ posts.date }}
+            Comment
           </div>
         </div>
+        
         {% endfor %}
-    </div>
-    {% endif %}
 {% endblock %} 

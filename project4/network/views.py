@@ -74,16 +74,18 @@ def register(request):
 
 
 class Create_post(View):
-    template_name = "network/index.html"
+    template_name = "templates/index.html"
 
-    @login_required
+
     def post(self, request):
-        post_model = Post()
+        post_model = Post.objects.all()
+        user = User.objects.get(username=request.user.username)
 
         post_content = request.POST.get('post_content')
-        user = User.objects.filter(username = request.user.username)
-        Post.objects.create(user = user, text = post_content)
-        return index(request)
+
+        post_model.create(user = user, text = post_content)
+        
+        return HttpResponseRedirect('/')
 
 class Likes_View(View):
     template_name = 'templates/index.html'
