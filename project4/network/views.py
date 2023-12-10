@@ -94,5 +94,3 @@ class Likes_View(View):
         post = self.post
         post.add()
         
-
-

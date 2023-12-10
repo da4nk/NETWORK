@@ -5,6 +5,9 @@ from . import views
 from .views import (
     Likes_View, Create_post
 )
+from rest_framework import routers
+router = routers.DefaultRouter()
+
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -12,5 +15,8 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     path('liked/str<post_id>', Likes_View.as_view(), name = "likes" ),
-    path('create', Create_post.as_view(), name = "create")
+    path('create', Create_post.as_view(), name = "create"),
+    # path('profile/int<post_id>', )
+    path('api/', include(router.urls))
+
 ]
