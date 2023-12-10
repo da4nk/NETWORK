@@ -24,7 +24,7 @@
         {% for posts in post %}
         <div class="card w-75 mb-3 m-4 ">
           <div class="card-header">
-            <h2>{{posts.user}}</h2>
+            <h2><a href="profile/{{posts.user.id}}">{{posts.user}}</a></h2>
           </div>
           <div class="card-body">
             <h5 class="card-title"> {{posts.text}}</h5>

@@ -16,6 +16,7 @@ class Post(models.Model):
 
 
 class Profile(models.Model):
+    user = models.ForeignKey(User, related_name="user_profile", on_delete = models.CASCADE)
     following = models.ManyToManyField("self", related_name="following_set", symmetrical=False,  blank=True)
     followers = models.ManyToManyField('self', related_name="followers_set", symmetrical=False, blank=True)
     def count_following(self):

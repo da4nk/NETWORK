@@ -1,12 +1,20 @@
 from django.urls import path, include
 from django.views.generic import RedirectView, TemplateView
-
+from . import api_views
 from . import views
 from .views import (
-    Likes_View, Create_post
+     Create_post,
+    Profile_view
 )
 from rest_framework import routers
+
+
+
 router = routers.DefaultRouter()
+router.register(r'users', api_views.UserViewSet)
+router.register(r'api_profile', api_views.ProfileViewSet)
+router.register(r'api_post', api_views.PostViewSet)
+
 
 
 urlpatterns = [
@@ -14,9 +22,11 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path('liked/str<post_id>', Likes_View.as_view(), name = "likes" ),
     path('create', Create_post.as_view(), name = "create"),
+    path('profile/<int:id>/', Profile_view.as_view(), name="profile"),
     # path('profile/int<post_id>', )
-    path('api/', include(router.urls))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+
 
 ]
+urlpatterns += router.urls

@@ -6,9 +6,19 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 
 from .models import User, Post
+
+class LoginRequired(LoginRequiredMixin):
+    login_url = "/login"
+    redirect_field_name = "login"
+
+
+
 
 
 def index(request):
@@ -76,7 +86,7 @@ def register(request):
 class Create_post(View):
     template_name = "templates/index.html"
 
-
+    
     def post(self, request):
         post_model = Post.objects.all()
         user = User.objects.get(username=request.user.username)
@@ -86,11 +96,8 @@ class Create_post(View):
         post_model.create(user = user, text = post_content)
         
         return HttpResponseRedirect('/')
-
-class Likes_View(View):
-    template_name = 'templates/index.html'
-    post = Post.objects.all()
-    def post(self, request):
-        post = self.post
-        post.add()
         
+class Profile_view(LoginRequired, View):
+    template_name = "templates/profilepage.html"
+    def get(self, request, id):
+        pass
