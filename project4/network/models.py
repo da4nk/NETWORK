@@ -4,9 +4,17 @@ import datetime
 
 
 class User(AbstractUser):
-    pass
+    following = models.ManyToManyField("self", related_name="following_set", symmetrical=False,  blank=True)
+    followers = models.ManyToManyField('self', related_name="followers_set", symmetrical=False, blank=True)
+    def count_following(self):
+        return self.following.count()
+
+    def count_followers(self):
+        return self.followers.count()
+
 
 class Post(models.Model):
+
     user = models.ForeignKey(User, related_name="user_post", on_delete = models.CASCADE)
     text = models.TextField(max_length=300)
     date = models.DateTimeField(auto_now=True)
@@ -15,11 +23,3 @@ class Post(models.Model):
         return self.likes.count()
 
 
-class Profile(models.Model):
-    user = models.ForeignKey(User, related_name="user_profile", on_delete = models.CASCADE)
-    following = models.ManyToManyField("self", related_name="following_set", symmetrical=False,  blank=True)
-    followers = models.ManyToManyField('self', related_name="followers_set", symmetrical=False, blank=True)
-    def count_following(self):
-        return self.following.count()
-    def count_followers(self):
-        return self.followers.count()

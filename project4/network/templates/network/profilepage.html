@@ -2,6 +2,54 @@
 
 {% block body %}
 
+<div class="card text-center" >
+    <div class="card-body">
+      <h5 class="card-header">{{user_profile}}</h5>
+         <nav aria-label="breadcrumb">
 
+        <ol class="breadcrumb">
+          
+          <li class="breadcrumb-item active">Following: {{user_profile.count_followers}}</li>
+          <li class="breadcrumb-item active">Followers: {{user_profile.count_following}}</li>
+          
+        </ol>
+              
+      <ol class="nav-item">
+      <a href="#" class=" btn btn-primary">Follow</a>
+
+      </ol>
+      </nav>
+    </div>  
+<br>
+      {% if user_profile.post is none %}
+      <div class="position-relative">
+
+        <div class="mt-5 ml-3 p-2 position-absolute top-50 start-50 translate-middle">This User has no post</div>
+      </div>
+      
+      {% else %}
+      <div class="card-title"><h1>Admins Post</h1></div>
+
+      {% for tweet in profile_post %}
+      
+      <div class="card text-center">
+
+        <div class="card-body">
+
+        <h5 class="card-title">{{tweet.text}}</h5>
+        </div>
+        <div class="card-footer text-body-secondary">
+          {{tweet.date}}  <i class="fa-regular fa-heart"></i> {{tweet.count_likes}}
+
+        </div>
+        
+      </div>
+      
+      {% endfor %}
+    </div>
+
+
+
+{% endif %}
 
 {% endblock %}

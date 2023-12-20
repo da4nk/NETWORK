@@ -8,6 +8,9 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import User
+from django.views.generic.base import TemplateView
+
 
 
 
@@ -33,7 +36,7 @@ def index(request):
 
 def login_view(request):
     if request.method == "POST":
-
+        
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
@@ -42,6 +45,8 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
+       
+
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "network/login.html", {
@@ -73,6 +78,7 @@ def register(request):
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
+
         except IntegrityError:
             return render(request, "network/register.html", {
                 "message": "Username already taken."
@@ -92,12 +98,17 @@ class Create_post(View):
         user = User.objects.get(username=request.user.username)
 
         post_content = request.POST.get('post_content')
-
-        post_model.create(user = user, text = post_content)
         
+        post_model.create(user = user, text = post_content)
         return HttpResponseRedirect('/')
         
-class Profile_view(LoginRequired, View):
-    template_name = "templates/profilepage.html"
-    def get(self, request, id):
-        pass
+def profile_view(request, id):
+
+    profile_post = Post.objects.all().filter(user = id)
+    
+    
+    return render(request, 'network/profilepage.html', 
+                  {
+                    'user_profile': User.objects.get(pk = id),
+                    'profile_post': profile_post
+                  })

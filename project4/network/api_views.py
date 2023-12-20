@@ -1,5 +1,5 @@
-from .models import Post, User, Profile
-from .serializers import UserSerializer, ProfileSerializer, PostSerializer
+from .models import Post, User
+from .serializers import UserSerializer,  PostSerializer
 from rest_framework import permissions, viewsets
 
 
@@ -11,6 +11,3 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer  
 
-class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
