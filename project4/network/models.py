@@ -14,7 +14,6 @@ class User(AbstractUser):
 
 
 class Post(models.Model):
-
     user = models.ForeignKey(User, related_name="user_post", on_delete = models.CASCADE)
     text = models.TextField(max_length=300)
     date = models.DateTimeField(auto_now=True)

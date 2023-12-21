@@ -10,6 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import User
 from django.views.generic.base import TemplateView
+from django.views.generic import ListView
+
 
 
 
@@ -112,3 +114,9 @@ def profile_view(request, id):
                     'user_profile': User.objects.get(pk = id),
                     'profile_post': profile_post
                   })
+class Following(ListView):
+    model = Post
+    template_name = "network/following.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
