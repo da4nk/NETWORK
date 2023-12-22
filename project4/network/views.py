@@ -5,8 +5,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import User
 from django.views.generic.base import TemplateView
@@ -114,9 +112,12 @@ def profile_view(request, id):
                     'user_profile': User.objects.get(pk = id),
                     'profile_post': profile_post
                   })
-class Following(ListView):
+class Following(LoginRequiredMixin, ListView):
     model = Post
     template_name = "network/following.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        user_model = User.objects.all().get(username = self.request.user.username)
+        print(user_model.following)
+        # context['following'] = Post.objects.all().filter(user= user_model)
+        # return context
