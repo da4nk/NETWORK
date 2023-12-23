@@ -30,8 +30,9 @@
       </div>
       
       {% else %}
-      <div class="card-title"><h1>Admins Post</h1></div>
-
+      <div class="card-title"><h1>{{ user_profile}} Posts:</h1></div>
+      <br>
+      <br>
       {% for tweet in profile_post %}
       
       <div class="card text-center">

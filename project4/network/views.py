@@ -119,5 +119,5 @@ class Following(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user_model = User.objects.all().get(username = self.request.user.username)
         print(user_model.following)
-        # context['following'] = Post.objects.all().filter(user= user_model)
-        # return context
+        context['following'] = Post.objects.all().filter(user= user_model)
+        return context

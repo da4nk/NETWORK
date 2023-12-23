@@ -23,7 +23,7 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path('create', Create_post.as_view(), name = "create"),
     path('profile/<str:id>/', views.profile_view, name="profile"),
-    path('following', Following.as_view(), name = "following"),
+    path('following/', Following.as_view(), name = "following"),
     # path('profile/int<post_id>', )
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
