@@ -1,13 +1,13 @@
-from typing import Any
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import User
-from django.views.generic.base import TemplateView
+from django.core.paginator import Paginator
+
 from django.views.generic import ListView
 
 
@@ -26,7 +26,7 @@ class LoginRequired(LoginRequiredMixin):
 
 def index(request):
     posts = Post.objects.all().order_by('-date')
-    
+    paginator = Paginator(posts, 10)
     
     return render(request, "network/index.html", 
                   {
@@ -117,7 +117,7 @@ class Following(LoginRequiredMixin, ListView):
     template_name = "network/following.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_model = User.objects.all().get(username = self.request.user.username)
-        print(user_model.following)
-        context['following'] = Post.objects.all().filter(user= user_model)
+        user_model = User.objects.all()
+        print(user_model[2].followers)
+        # context['following'] = Post.objects.all().filter(user= user_model)
         return context
