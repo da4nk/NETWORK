@@ -26,11 +26,16 @@ class LoginRequired(LoginRequiredMixin):
 
 def index(request):
     posts = Post.objects.all().order_by('-date')
+    # limits to 10 posts per page
     paginator = Paginator(posts, 10)
+    # gets which links to show pages
+    page_number = request.GET.get('page')
+    # puts posts into variable but only at a limit
+    post_limit = paginator.get_page(page_number)
     
     return render(request, "network/index.html", 
                   {
-                      "post": posts
+                      "post": post_limit
                   })
 
 
