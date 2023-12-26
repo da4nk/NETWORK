@@ -126,3 +126,8 @@ class Following(LoginRequiredMixin, ListView):
         print(user_model[2].followers)
         # context['following'] = Post.objects.all().filter(user= user_model)
         return context
+
+
+def follow(request, id):
+
+    return HttpResponseRedirect(reverse(profile_view, ))

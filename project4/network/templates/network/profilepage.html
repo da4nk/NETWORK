@@ -17,7 +17,7 @@
 
         {% else %}
       <ol class="nav-item">
-      <a href="#" class=" btn btn-primary">Follow</a>
+      <a href="{% url 'follow' user_profile.id %}" class=" btn btn-primary">Follow</a>
         {% endif %}
       </ol>
       </nav>
@@ -50,7 +50,6 @@
       
       {% endfor %}
     </div>
-
 
 
 {% endif %}
