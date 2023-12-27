@@ -1,10 +1,13 @@
 {% extends "network/layout.html" %}
+{% load static %}
+
+
 
 {% block body %}
 
-<div class="card text-center" >
+<div  class="card text-center" >
     <div class="card-body">
-      <h5 class="card-header">{{user_profile}}</h5>
+      <h5  class="card-header">{{user_profile}}</h5>
          <nav aria-label="breadcrumb">
 
         <ol class="breadcrumb">
@@ -17,9 +20,12 @@
 
         {% else %}
       <ol class="nav-item">
-      <a href="{% url 'follow' user_profile.id %}" class=" btn btn-primary">Follow</a>
-        {% endif %}
+        <div id="profile_info" data-user-id = "{{user_profile.id }}"></div>
+        <div id="user" data-current-user = "{{ request.user }}" data-current-id = "{{request.user.id}}"></div>
+        <button id = "follow_button"class=" btn btn-primary">Follow</a>
       </ol>
+      {% endif %}
+
       </nav>
     </div>  
 <br>
@@ -53,5 +59,6 @@
 
 
 {% endif %}
+<script src="{% static 'network/index.js' %}"></script>   
 
 {% endblock %}

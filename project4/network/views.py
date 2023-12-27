@@ -128,10 +128,3 @@ class Following(LoginRequiredMixin, ListView):
         return context
 
 
-def follow(request, id):
-
-    user_to_follow = User.objects.all().get(id = id)
-    print(user_to_follow.count_followers())
-    user = User.objects.all().get(username = request.user.username)
-    # user.create(following = user_to_follow)
-    return HttpResponseRedirect(reverse(profile_view, kwargs={"id":id}))

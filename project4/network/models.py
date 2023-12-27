@@ -6,7 +6,7 @@ import datetime
 class User(AbstractUser):
     following = models.ManyToManyField("self", related_name="followers", symmetrical=False,  blank=True)
     def count_following(self):
-        return self.following.count(), self.following
+        return self.following.count()
 
     def count_followers(self):
         return self.followers.count()
