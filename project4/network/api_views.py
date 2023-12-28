@@ -1,6 +1,8 @@
 from .models import Post, User
 from .serializers import UserSerializer,  PostSerializer
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 class UserViewSet(viewsets.ModelViewSet):

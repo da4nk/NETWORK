@@ -22,7 +22,10 @@
       <ol class="nav-item">
         <div id="profile_info" data-user-id = "{{user_profile.id }}"></div>
         <div id="user" data-current-user = "{{ request.user }}" data-current-id = "{{request.user.id}}"></div>
-        <button id = "follow_button"class=" btn btn-primary">Follow</a>
+        <form method="post">
+          {% csrf_token %}
+        <button id = "follow_button" class=" btn btn-primary">Follow</button>
+        </form>
       </ol>
       {% endif %}
 
