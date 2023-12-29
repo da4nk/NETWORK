@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () =>{
     
     
-    document.querySelector('#follow_button').addEventListener('click', follow);
+    document.querySelector('#follow_button').addEventListener('submit', follow);
 
 
 });
@@ -14,19 +14,24 @@ function follow(){
     const current_user = current_user_data.getAttribute('data-current-user');
     const current_user_id = current_user_data.getAttribute('data-current-id');
     console.log(user_to_follow)
-    const button = document.querySelector('#follow_button')
+    const button = document.querySelector('#follow_button');
 
     var is_following = false;
 
     // try{
-        const csrftoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        fetch(`/users/${user_to_follow}/?format=json`,
+        const auth_token = 'bb0be4fca9f83f06e2a2d9049f34a7f0760798f3';
+        console.log('faksldfjs');
+        fetch(`users/${user_to_follow}/`,
         {
+
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CsSRFToken': csrftoken,
+                'Authorization': `Token ${auth_token}`,
+                'X-CSRFToken': csrftoken,
+
               },
           
             body: JSON.stringify(

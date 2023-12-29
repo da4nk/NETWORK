@@ -1,14 +1,15 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import User
 from django.core.paginator import Paginator
-
 from django.views.generic import ListView
+
+
 
 
 
@@ -126,5 +127,10 @@ class Following(LoginRequiredMixin, ListView):
         print(user_model[2].followers)
         # context['following'] = Post.objects.all().filter(user= user_model)
         return context
+
+
+        
+
+
 
 

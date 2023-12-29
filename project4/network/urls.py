@@ -1,18 +1,12 @@
 from django.urls import path, include
 from django.views.generic import RedirectView, TemplateView
-from . import api_views
 from . import views
 from .views import (
      Create_post, Following
     
 )
-from rest_framework import routers
 
 
-
-router = routers.DefaultRouter()
-router.register(r'users', api_views.UserViewSet)
-router.register(r'api_post', api_views.PostViewSet)
 
 
 
@@ -24,9 +18,5 @@ urlpatterns = [
     path('create', Create_post.as_view(), name = "create"),
     path('profile/<str:id>/', views.profile_view, name="profile"),
     path('following/', Following.as_view(), name = "following"),
-
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
-
-
+    # path('follow-profile/<str:id>', Follow_profile.as_view(), name = "profile_follow"),
 ]
-urlpatterns += router.urls
