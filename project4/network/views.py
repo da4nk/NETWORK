@@ -8,7 +8,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import User
 from django.core.paginator import Paginator
 from django.views.generic import ListView
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 
@@ -127,6 +129,16 @@ class Following(LoginRequiredMixin, ListView):
         print(user_model[2].followers)
         # context['following'] = Post.objects.all().filter(user= user_model)
         return context
+
+    
+def Follow_profile(request, user_id):
+    try:
+        user_to_follow = User.objects.get(id = user_id)
+    except User.DoesNotExist:
+        return JsonResponse({'Error': 'User not found'}, status = 404)
+    if request.method == "GET":
+        return JsonResponse(user_to_follow.serialize())
+
 
 
         

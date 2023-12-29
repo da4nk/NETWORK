@@ -10,6 +10,13 @@ class User(AbstractUser):
 
     def count_followers(self):
         return self.followers.count()
+    def serialize(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'following': [follower.username for follower in self.following.all()],
+            'followers': [following.username for following in self.followers.all()]
+        }
 
 
 class Post(models.Model):
