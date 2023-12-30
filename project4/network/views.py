@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -130,14 +130,25 @@ class Following(LoginRequiredMixin, ListView):
         # context['following'] = Post.objects.all().filter(user= user_model)
         return context
 
-    
+@csrf_exempt
 def Follow_profile(request, user_id):
+
     try:
         user_to_follow = User.objects.get(id = user_id)
     except User.DoesNotExist:
         return JsonResponse({'Error': 'User not found'}, status = 404)
+    
     if request.method == "GET":
         return JsonResponse(user_to_follow.serialize())
+    
+    elif request.method == 'PUT':
+        current_user = User.objects.get(id = request.user.id)
+        data = json.loads(request.body)
+        if data.get('followers') is not None:
+            user_to_follow.followers.add(current_user)
+            print('done')
+        user_to_follow.save()
+        return HttpResponse(status=204)
 
 
 
