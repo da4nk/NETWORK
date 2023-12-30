@@ -11,6 +11,8 @@ from django.views.generic import ListView
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.utils.decorators import method_decorator
+
 
 
 
@@ -127,27 +129,31 @@ class Following(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user_model = User.objects.all()
         print(user_model[2].followers)
-        # context['following'] = Post.objects.all().filter(user= user_model)
+        context['following'] = Post.objects.all().filter(user= user_model)
         return context
 
-@csrf_exempt
-def Follow_profile(request, user_id):
+@method_decorator(csrf_exempt, name='dispatch')
+class Follow_profile(View):
+       
+    def get(self, request, user_id):
+        try:
+            user_to_follow = User.objects.get(id = user_id)
+            self.user_to_follow = user_to_follow
+        except User.DoesNotExist:
+            return JsonResponse({'Error': 'User not found'}, status = 404)
+        return JsonResponse(self.user_to_follow.serialize())
+    
+    
+    def put(self, request, user_id):
+        
+        self.get(request, user_id)
 
-    try:
-        user_to_follow = User.objects.get(id = user_id)
-    except User.DoesNotExist:
-        return JsonResponse({'Error': 'User not found'}, status = 404)
-    
-    if request.method == "GET":
-        return JsonResponse(user_to_follow.serialize())
-    
-    elif request.method == 'PUT':
         current_user = User.objects.get(id = request.user.id)
         data = json.loads(request.body)
         if data.get('followers') is not None:
-            user_to_follow.followers.add(current_user)
+            self.user_to_follow.followers.add(current_user)
             print('done')
-        user_to_follow.save()
+        self.user_to_follow.save()
         return HttpResponse(status=204)
 
 

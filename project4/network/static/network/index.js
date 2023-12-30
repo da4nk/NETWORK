@@ -5,6 +5,22 @@ document.addEventListener('DOMContentLoaded', () =>{
 
 
 });
+
+
+
+function is_following(){
+    const user_to_follow_data = document.querySelector('#profile_info');
+    const user_to_follow = user_to_follow_data.getAttribute('data-user-id');
+
+    const current_user_data = document.querySelector('#user');
+
+    const current_user = current_user_data.getAttribute('data-current-user');
+
+    fetch()
+
+}
+
+
 function follow(){
     const user_to_follow_data = document.querySelector('#profile_info');
     const user_to_follow = user_to_follow_data.getAttribute('data-user-id');
@@ -45,8 +61,8 @@ function follow(){
                 throw new Error('not workin');
             }
         })
-        button.innerHTML = 'unfollow'
-        is_following = true
+        button.innerHTML = 'Unfollow';
+        is_following = true;
     
 
     // catch(is_following){

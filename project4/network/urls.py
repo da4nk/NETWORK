@@ -21,5 +21,5 @@ urlpatterns = [
 
 
     # api endpoints __--------
-    path('users/<int:user_id>/', views.Follow_profile, name = "profile_follow"),
+    path('users/<int:user_id>/', Follow_profile.as_view(), name = "profile_follow"),
 ]
