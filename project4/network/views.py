@@ -13,7 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.utils.decorators import method_decorator
 
-
+from django.views.generic import TemplateView
+from django.core import serializers
 
 
 
@@ -115,51 +116,97 @@ class Create_post(View):
 def profile_view(request, id):
 
     profile_post = Post.objects.all().filter(user = id)
-    
-    
-    return render(request, 'network/profilepage.html', 
+    user_followers = []
+    user_model = User.objects.get(id = id).followers.all()
+    for i in user_model:
+        user_followers.append(i)
+    if user_followers:
+        return render(request, 'network/profilepage.html', 
                   {
                     'user_profile': User.objects.get(pk = id),
-                    'profile_post': profile_post
+                    'profile_post': profile_post,
+                    'user_to_follow_followers': user_followers
                   })
-class Following(LoginRequiredMixin, ListView):
-    model = Post
+
+
+class Following(LoginRequiredMixin, TemplateView):
     template_name = "network/following.html"
     def get_context_data(self, **kwargs):
+        
         context = super().get_context_data(**kwargs)
-        user_model = User.objects.all()
-        print(user_model[2].followers)
-        context['following'] = Post.objects.all().filter(user= user_model)
+        user_model = User.objects.all().get(id = self.request.user.id).following.all()
+
+        following = []
+
+        for user in user_model:
+            following.append(Post.objects.all().filter(user = user))
+     
+        context['following'] = following
         return context
+
+
+
+
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class Follow_profile(View):
        
     def get(self, request, user_id):
+
         try:
-            user_to_follow = User.objects.get(id = user_id)
+            user_to_follow = User.objects.all().get(id = user_id)
             self.user_to_follow = user_to_follow
+
         except User.DoesNotExist:
             return JsonResponse({'Error': 'User not found'}, status = 404)
+        
         return JsonResponse(self.user_to_follow.serialize())
-    
+
     
     def put(self, request, user_id):
-        
         self.get(request, user_id)
 
         current_user = User.objects.get(id = request.user.id)
         data = json.loads(request.body)
-        if data.get('followers') is not None:
+        # checks if user is in followers list
+        if data.get('followers') is not None and current_user.username in data.get('followers'):
+          
             self.user_to_follow.followers.add(current_user)
-            print('done')
-        self.user_to_follow.save()
+            self.user_to_follow.save()
+            # checks if user is not in followers list
+        elif current_user.username not in data.get('followers'):
+            self.user_to_follow.followers.remove(current_user)
+            self.user_to_follow.save()
+
         return HttpResponse(status=204)
+    
+    def post(self,request, user_id):
+        return HttpResponseRedirect(reverse('profile', args=[user_id]))
 
 
-
+@method_decorator(csrf_exempt, name='dispatch')
+class Api_Post(View):
+    
+    def get(self, request, post_id):
+        try:
+            post = Post.objects.all().get(id = post_id)
+            self.post = post
+        except Post.DoesNotExist:
+            return JsonResponse({'Error': 'Post not found'}, status = 404)
+        return JsonResponse(self.post.serialize())
         
+    def put(self, request, post_id):
+        self.get(request, post_id)
+        current_user = request.user
+        data = json.loads(request.body)
 
+        if data.get('likes') is None and current_user.username != data.get('likes'):
+            self.post.likes.add(current_user)
+            self.post.save()
+        elif data.get('likes') is not None and current_user.username == data.get('likes'):
+            self.post.likes.remove(current_user)
+            self.post.save()
 
-
-
+        return HttpResponse(status=204)
+            

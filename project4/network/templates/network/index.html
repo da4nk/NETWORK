@@ -1,10 +1,11 @@
 {% extends "network/layout.html" %}
-
+{% load static %}
 {% block body %}
 
 {% if user.is_authenticated %}
 <div class = "card p-4">
-  
+    <!--  -->
+  <div id = "user " data-current-user="{{ request.user.id }}"></div>
     <form action="{% url 'create'  %}" method = "post">
         {% csrf_token %}
         <div class="card-body">
@@ -21,6 +22,7 @@
     {% endif %}
 
 </div>
+<div data-post-id="{{posts.id}}"></div>
         {% for posts in post %}
         <div class="card w-75 mb-3 m-4 ">
           <div class="card-header">
@@ -29,8 +31,8 @@
           <div class="card-body">
             <h5 class="card-title"> {{posts.text}}</h5>
             <p class="card-text"> Posted {{posts.date}}</p>
-            <i class="fa-regular fa-heart"></i> {{posts.count_likes}}
-            
+            <i style="cursor: pointer;" class="fa-regular fa-heart"></i> {{posts.count_likes}}
+            <div id = "post_id_stuff" data-current-post = "{{posts.id}}"></div>
           </div>
           <div class="card-footer text-body-secondary">
             Comment
@@ -38,4 +40,6 @@
         </div>
         
         {% endfor %}
+<script src="{% static 'network/likes.js' %}"></script>
+
 {% endblock %} 

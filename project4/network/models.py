@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 import datetime
+from django.core import serializers
 
 
 class User(AbstractUser):
@@ -14,9 +15,9 @@ class User(AbstractUser):
         return {
             'id': self.id,
             'username': self.username,
-            'following': [follower.username for follower in self.following.all()],
-            'followers': [following.username for following in self.followers.all()]
-        }
+            'following': [followers.username for followers in self.following.all()],
+            'followers': [following.username for following in self.followers.all()]        
+            }
 
 
 class Post(models.Model):
@@ -26,5 +27,11 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name="post")
     def count_likes(self):
         return self.likes.count()
-
+    def serialize(self):
+        return {
+            'user': self.user.username,
+            'text': self.text,
+            'date': self.date,
+            'likes': [post.username for post in self.likes.all()]
+        }
 

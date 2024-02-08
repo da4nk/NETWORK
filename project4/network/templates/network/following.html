@@ -2,16 +2,26 @@
 
 {% block body %}
 
-<div>
-  following page:
-<div class="card text-bg-dark">
 
-    <div class="card-img-overlay">
-      <h5 class="card-title">{{ following }}</h5>
-      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-      <p class="card-text"><small>Last updated 3 mins ago</small></p>
-    </div>
-  </div>
+  <div>
+  {% for follow in following %}
+<div class="card text-bg-dark">
+  
+
+    {% for i in follow %}
+    <div class="card-body">
+      <h5 class="card-title"> <a href="{% url 'profile' i.user.id %}">{{ i.user }}</a></h5>
+      <p class="card-text">{{ i.text }}</p>
+      <p class="card-text"><small> {{ i.date}}</small></p>
+      <h4> {{ i.count_likes }}</h4>
+      <i id = "like_button" class="fa-regular fa-heart"></i> {{posts.count_likes}}
+
+      
+      </div>
+    {% endfor %}
+</div>
+
+  {% endfor %}
 </div>
 
 

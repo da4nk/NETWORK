@@ -14,16 +14,25 @@
           
           <li class="breadcrumb-item active">Followers: {{user_profile.count_followers}}</li>
           <li class="breadcrumb-item active">Following: {{user_profile.count_following}}</li>
-          
         </ol>
-        {% if user_profile == request.user%}
+        {% if user_profile == request.user %}
 
         {% else %}
       <ol class="nav-item">
         <div id="profile_info" data-user-id = "{{user_profile.id }}"></div>
         <div id="user" data-current-user = "{{ request.user }}" data-current-id = "{{request.user.id}}"></div>
-          
-          <input  id = "follow_button"  class=" btn btn-primary" type="submit" value="Follow">
+        <form action="{% url 'profile_follow' user_profile.id %}" method = "post">
+          {% csrf_token %}
+        
+          {% if request.user in user_to_follow_followers %}
+          <button  id = "follow_button"  class=" btn btn-primary"  >UnFollow</button>
+
+          {% elif request.user not in user_to_follow_followers %}
+          <button  id = "follow_button"  class=" btn btn-primary"  >Follow</button>
+
+          {% endif %}
+    </form>
+
       </ol>
       {% endif %}
 
@@ -61,5 +70,6 @@
 
 {% endif %}
 <script src="{% static 'network/index.js' %}"></script>   
+
 
 {% endblock %}
