@@ -32,6 +32,8 @@ class Post(models.Model):
             'user': self.user.username,
             'text': self.text,
             'date': self.date,
-            'likes': [post.username for post in self.likes.all()]
+            'likes': [post.username for post in self.likes.all()],
+            'user_id': self.user.id,
+            'like_count': self.count_likes()
         }
 

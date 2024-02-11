@@ -23,23 +23,8 @@
 
 </div>
 <div data-post-id="{{posts.id}}"></div>
-        {% for posts in post %}
-        <div class="card w-75 mb-3 m-4 ">
-          <div class="card-header">
-            <h2><a href="profile/{{posts.user.id}}">{{posts.user}}</a></h2>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title"> {{posts.text}}</h5>
-            <p class="card-text"> Posted {{posts.date}}</p>
-            <i style="cursor: pointer;" class="fa-regular fa-heart"></i> {{posts.count_likes}}
-            <div id = "post_id_stuff" data-current-post = "{{posts.id}}"></div>
-          </div>
-          <div class="card-footer text-body-secondary">
-            Comment
-          </div>
-        </div>
-        
-        {% endfor %}
+
+<div class = active-post></div>
 <script src="{% static 'network/likes.js' %}"></script>
 
 {% endblock %} 

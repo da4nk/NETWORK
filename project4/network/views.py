@@ -210,3 +210,13 @@ class Api_Post(View):
 
         return HttpResponse(status=204)
             
+
+class All_api_post(View):
+    def get(self, request):
+        try:
+            posts = Post.objects.all()
+        except Post.DoesNotExist:
+            return JsonResponse({'Error': 'Post not found'}, status = 404)
+
+        serialized_posts = [post.serialize() for post in posts]
+        return JsonResponse(serialized_posts, safe=False)

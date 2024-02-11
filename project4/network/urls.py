@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.views.generic import RedirectView, TemplateView
 from . import views
 from .views import (
-     Create_post, Following,Follow_profile,Api_Post
+     All_api_post, Create_post, Following,Follow_profile,Api_Post
     
 )
 
@@ -22,5 +22,6 @@ urlpatterns = [
 
     # api endpoints __--------
     path('users/<int:user_id>/', Follow_profile.as_view(), name = "profile_follow"),
-    path('post/<int:post_id>/', Api_Post.as_view(), name = "api_Post")
+    path('post/<int:post_id>/', Api_Post.as_view(), name = "api_Post"),
+    path('post/', All_api_post.as_view(), name = "api_Post"),
 ]
