@@ -30,7 +30,7 @@ then(response => response.json()).then(data => {
 
     like_div.addEventListener('click', (e) => {
         e.preventDefault();
-        like(posts.postid);
+        like(posts);
     });
     let like_button_container = document.createElement('div');
     like_button_container.classList.add('container');
@@ -47,8 +47,9 @@ then(response => response.json()).then(data => {
                     <p class="card-text">Posted ${posts.date}</p>
                     ${like_button_container.outerHTML} <i>${posts.like_count}</i>
                 </div>
-                <div class="card-footer text-body-secondary">
-                    Comment
+                
+                <div id = "edit" onclick = "post_edit()">
+                edit
                 </div>
             </div>`;
 
@@ -65,39 +66,37 @@ then(response => response.json()).then(data => {
     });
 }
 
-function like(post_id)
+function like(posts)
 {
 
     let userelement = document.querySelector('#users');
     let user = userelement.dataset.currentuser;
     let likes = document.querySelector('.fa-heart');
-    fetch(`post/${post_id}/`, {}).then(response => response.json()).then(data => {
-        if (search(data.likes, user) === -1) {
-            data.likes.push(user); // Push the 'user' into the 'data.likes' array
-
-            fetch(`post/${post_id}/`, {
-                method: 'POST',
-                body: JSON.stringify(data) // Send the updated 'data' object as the request body
-            }).then(response => response.json()).then(data => {
-                // Handle the response data if needed
-                likes.innerHTML = data.like_count;
-            });
-        }
-
-        if(search(data.likes, user) === user) {
-            data.likes.pop(user);
-            fetch(`post/${post_id}/`, {
-                method: 'POST',
-                body: JSON.stringify(data)
-            }).then(response => response.json()).then(data => {
-                likes.innerHTML = data.like_count;
-            });
-        }
-    });
-
-
-
-    
+    if (search(posts.likes, user) === -1) {
+        posts.likes.push(user);
+        posts.like_count += 1;
+        fetch(`post/${posts.postid}/`, {
+            method: 'PUT',
+            body: JSON.stringify(posts) // Send the updated 'data' object as the request body
+        });
+    }
+    if(search(posts.likes, user) === user)
+    {
+        posts.likes.splice(posts.likes.indexOf(user), 1);
+        posts.like_count -= 1;
+        fetch(`post/${posts.postid}/`, {
+            method: 'PUT',
+            body: JSON.stringify({ likes: posts.likes, like_count: posts.like_count })
+        });
+    }
 }
+
+function post_edit()
+{
+    edit = document.querySelector('#edit');
+    
+
+}
+    
 
 

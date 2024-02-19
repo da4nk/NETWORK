@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import get_object_or_404, render, HttpResponse
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,7 +14,7 @@ import json
 from django.utils.decorators import method_decorator
 
 from django.views.generic import TemplateView
-from django.core import serializers
+
 
 from .models import User, Post
 
@@ -191,25 +191,26 @@ class Follow_profile(View):
 class Api_Post(View):
     
     def get(self, request, post_id):
-        try:
-            post = Post.objects.all().get(id = post_id)
-            self.post = post
-        except Post.DoesNotExist:
-            return JsonResponse({'Error': 'Post not found'}, status = 404)
+        post = Post.objects.all().get(id = post_id)
+        self.post = post
+        if post is None:
+            return JsonResponse({"error": "Post not found."}, status=404)
+
         return JsonResponse(self.post.serialize())
         
     def put(self, request, post_id):
         self.get(request, post_id)
-        current_user = request.user
-        data = json.loads(request.body)
 
-        if data.get('likes') and request.user not in data.get('likes'):
-            self.post.likes.add(current_user)
-            self.post.save()
-        elif request.user in data.get('likes'):
-            self.post.likes.remove(current_user)
-            self.post.save()
+        data = json.loads(request.body)
+        if data.get('likes') != None:
+            self.post.likes.add(data.get('likes'))
+        else:
+            self.post.likes.remove(data.get('likes'))
+        # self.post.like_count(data['like_count'])
+        self.post.save()
+        
         return HttpResponse(status=204)
+        
             
 
 class All_api_post(View):
