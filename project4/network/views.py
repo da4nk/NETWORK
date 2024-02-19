@@ -16,11 +16,10 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from django.core import serializers
 
-
-
-
-
 from .models import User, Post
+
+
+
 
 class LoginRequired(LoginRequiredMixin):
     login_url = "/login"
@@ -32,16 +31,18 @@ class LoginRequired(LoginRequiredMixin):
 
 def index(request):
     posts = Post.objects.all().order_by('-date')
-    # limits to 10 posts per page
+
+
     paginator = Paginator(posts, 10)
-    # gets which links to show pages
     page_number = request.GET.get('page')
-    # puts posts into variable but only at a limit
     post_limit = paginator.get_page(page_number)
+    
+    
     
     return render(request, "network/index.html", 
                   {
-                      "post": post_limit
+                      "post": post_limit,
+                      "posts": posts
                   })
 
 
@@ -149,6 +150,7 @@ class Following(LoginRequiredMixin, TemplateView):
 
 
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class Follow_profile(View):
        
@@ -201,13 +203,12 @@ class Api_Post(View):
         current_user = request.user
         data = json.loads(request.body)
 
-        if data.get('likes') is None and current_user.username != data.get('likes'):
+        if data.get('likes') and request.user not in data.get('likes'):
             self.post.likes.add(current_user)
             self.post.save()
-        elif data.get('likes') is not None and current_user.username == data.get('likes'):
+        elif request.user in data.get('likes'):
             self.post.likes.remove(current_user)
             self.post.save()
-
         return HttpResponse(status=204)
             
 

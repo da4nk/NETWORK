@@ -22,9 +22,11 @@
     {% endif %}
 
 </div>
-<div data-post-id="{{posts.id}}"></div>
+<div id = "users" data-currentuser="{{request.user}}"></div>
 
-<div class = active-post></div>
+<div class = active-post>
+  
+</div>
 <script src="{% static 'network/likes.js' %}"></script>
 
 {% endblock %} 

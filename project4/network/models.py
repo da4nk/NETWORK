@@ -29,6 +29,7 @@ class Post(models.Model):
         return self.likes.count()
     def serialize(self):
         return {
+            'postid': self.id,
             'user': self.user.username,
             'text': self.text,
             'date': self.date,
