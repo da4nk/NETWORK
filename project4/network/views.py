@@ -17,6 +17,8 @@ from django.views.generic import TemplateView
 
 
 from .models import User, Post
+import json
+import json
 
 
 
@@ -122,12 +124,19 @@ def profile_view(request, id):
     for i in user_model:
         user_followers.append(i)
     if user_followers:
+            return render(request, 'network/profilepage.html', 
+                                {
+                                    'user_profile': User.objects.get(pk = id),
+                                    'profile_post': profile_post,
+                                    'user_to_follow_followers': user_followers
+                                })
+    else:
         return render(request, 'network/profilepage.html', 
-                  {
-                    'user_profile': User.objects.get(pk = id),
-                    'profile_post': profile_post,
-                    'user_to_follow_followers': user_followers
-                  })
+                                {
+                                    'user_profile': User.objects.get(pk = id),
+                                    'profile_post': profile_post,
+                                    'user_to_follow_followers': []
+                                })
 
 
 class Following(LoginRequiredMixin, TemplateView):
@@ -199,16 +208,31 @@ class Api_Post(View):
         return JsonResponse(self.post.serialize())
         
     def put(self, request, post_id):
-        self.get(request, post_id)
-
-        data = json.loads(request.body)
-        if data.get('likes') != None:
-            self.post.likes.add(data.get('likes'))
-        else:
-            self.post.likes.remove(data.get('likes'))
-        # self.post.like_count(data['like_count'])
-        self.post.save()
+        try:
+            self.get(request, post_id)
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=404)
         
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON."}, status=400)
+        
+        usernames = data.get('likes')
+        
+        users = User.objects.filter(username__in=usernames)
+
+
+        if request.user.username not in usernames:
+            self.post.likes.add(*users)
+            
+            print('added')
+
+        elif request.user.username in usernames:
+            self.post.likes.remove(*users)
+            print('removed')
+
+        self.post.save()
         return HttpResponse(status=204)
         
             

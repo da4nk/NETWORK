@@ -45,7 +45,6 @@ async function follow(){
       follow_button = document.querySelector('#follow_button');
       
       user.followers.splice(index, 1);
-      location.reload();
 
       fetch(`http://127.0.0.1:8000/users/${user_to_follow}/`, {
         method: 'PUT',
@@ -64,6 +63,8 @@ async function follow(){
         }
 
       })
+      location.reload();
+
 
     }
     if(search(user.followers, current_user.username) != current_user && follow_button.innerHTML === 'Follow'){
@@ -72,7 +73,6 @@ async function follow(){
     .then(response => response.json())
     .then(user => {
         user.followers.push(current_user);
-        location.reload();
 
         
 
@@ -93,6 +93,8 @@ async function follow(){
 
       })
     })
+    location.reload();
+
   }
 });
 
