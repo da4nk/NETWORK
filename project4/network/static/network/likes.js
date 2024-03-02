@@ -14,7 +14,6 @@ function like(posts)
 
     let userelement = document.querySelector('#users');
     let user = userelement.dataset.currentuser;
-    let likes = document.querySelector('.fa-heart');
 
     if (search(posts.likes, user) === -1) {
         posts.likes.push(user);
@@ -26,6 +25,8 @@ function like(posts)
             // Send the updated 'data' object as the request body
         });
 
+        
+
     }
 
     else if (search(posts.likes, user) === user) {
@@ -34,11 +35,16 @@ function like(posts)
 
         posts.like_count -= 1;
 
-        fetch(`post/${posts.postid}/`, {
+         fetch(`post/${posts.postid}/`, {
             method: 'PUT',
             body: JSON.stringify({likes: posts.likes, like_count: posts.like_count})
 
         });
+
+
+
+
+
     }
 }
 
@@ -51,6 +57,7 @@ function load_posts(){
     then(response => response.json()).then(data => {
         data.forEach(posts => {
     
+        let post_Container = document.createElement('div');
         let div = document.createElement('div');
         let like_div = document.createElement('div');
         like_div.innerHTML = `<i style="cursor: pointer;" class="fa-regular fa-heart"></i>`;
@@ -60,7 +67,14 @@ function load_posts(){
         let like_button_container = document.createElement('div');
         like_button_container.classList.add('container');
     
-    
+        
+        let count_element = document.createElement('i');
+        count_element.innerHTML = posts.like_count;
+        like_div.addEventListener('click', async (e) => {
+            e.preventDefault();
+            like(posts, count_element);
+            count_element.innerHTML = posts.like_count;
+        });
             
             div.innerHTML = `
                 <div>
@@ -70,9 +84,8 @@ function load_posts(){
                     <div class="card-body">
                         <h5 class="card-title">${posts.text}</h5>
                         <p class="card-text">Posted ${posts.date}</p>
-                        ${like_div.onclick= like(posts)}
                         
-                        <i>${posts.like_count}</i>
+                        ${count_element.outerHTML}
                     </div>
                     
                     <div id = "edit" onclick = "post_edit()">
@@ -80,12 +93,14 @@ function load_posts(){
                     </div>
                 </div>`;
     
-                like_div.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                     like(posts);
-                });
+              
     
-          document.querySelector('.active-post').appendChild(div);
+            post_Container.appendChild(div);
+            post_Container.appendChild(like_div);
+
+            // Append the postContainer to the active-post
+            document.querySelector('.active-post').appendChild(post_Container);
+
     
     
     

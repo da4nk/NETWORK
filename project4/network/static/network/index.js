@@ -38,33 +38,24 @@ async function follow(){
       
     if (search(user.followers, current_user) === current_user){
       
-      let is_following = true;
 
 
       const index = user.followers.indexOf(current_user);
       follow_button = document.querySelector('#follow_button');
       
       user.followers.splice(index, 1);
+      let is_following = false;
+      followButton.innerHTML = is_following ? 'Unfollow' : 'Follow'
 
       fetch(`http://127.0.0.1:8000/users/${user_to_follow}/`, {
+
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(user),
 
-      }).then(response => {
-        if (response.ok) {
-            location.reload();
-        }
-        if (response.ok) {
-            const followButton = document.querySelector('#follow_button');
-            followButton.innerHTML = isFollowing ? 'Unfollow' : 'Follow';
-        }
-
       })
-      location.reload();
-
 
     }
     if(search(user.followers, current_user.username) != current_user && follow_button.innerHTML === 'Follow'){
@@ -73,6 +64,9 @@ async function follow(){
     .then(response => response.json())
     .then(user => {
         user.followers.push(current_user);
+        const followButton = document.querySelector('#follow_button');
+        
+        let is_following = true;
 
         
 
@@ -82,18 +76,11 @@ async function follow(){
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(user)
-      }).then(response => {
-        if (response.ok) {
-          location.reload();
-        }
-        if (response.ok) {
-          const followButton = document.querySelector('#follow_button');
-          followButton.innerHTML = isFollowing ? 'Unfollow' : 'Follow';
-      }
+      })
+
+      followButton.innerHTML = is_following ? 'Unfollow' : 'Follow';
 
       })
-    })
-    location.reload();
 
   }
 });

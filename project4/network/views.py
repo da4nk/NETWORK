@@ -1,23 +1,19 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, render, HttpResponse
+from django.shortcuts import render, HttpResponse
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import User
 from django.core.paginator import Paginator
-from django.views.generic import ListView
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.utils.decorators import method_decorator
 
 from django.views.generic import TemplateView
 
-
 from .models import User, Post
-import json
 import json
 
 
@@ -163,7 +159,7 @@ class Following(LoginRequiredMixin, TemplateView):
 @method_decorator(csrf_exempt, name='dispatch')
 class Follow_profile(View):
        
-    def get(self, request, user_id):
+    def get(self, user_id):
 
         try:
             user_to_follow = User.objects.all().get(id = user_id)
@@ -213,26 +209,22 @@ class Api_Post(View):
         except Post.DoesNotExist:
             return JsonResponse({"error": "Post not found."}, status=404)
         
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON."}, status=400)
+        data = json.loads(request.body)
         
-        usernames = data.get('likes')
+        user = User.objects.get(username = request.user.username)
+
+        if data.get('likes') != None and user.username not in data.get('likes'):
+            self.post.likes.remove(user)
         
-        users = User.objects.filter(username__in=usernames)
+            print('removed')
+                
 
-
-        if request.user.username not in usernames:
-            self.post.likes.add(*users)
-            
+        else:
+            self.post.likes.add(user)
             print('added')
 
-        elif request.user.username in usernames:
-            self.post.likes.remove(*users)
-            print('removed')
-
         self.post.save()
+
         return HttpResponse(status=204)
         
             
