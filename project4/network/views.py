@@ -215,17 +215,16 @@ class Api_Post(View):
 
         if data.get('likes') != None and user.username not in data.get('likes'):
             self.post.likes.remove(user)
-        
-            print('removed')
+            self.post.save()
+            return HttpResponse(status=204)
+            
                 
 
         else:
             self.post.likes.add(user)
-            print('added')
+            self.post.save()
+        return JsonResponse(self.post.serialize())
 
-        self.post.save()
-
-        return HttpResponse(status=204)
         
             
 
