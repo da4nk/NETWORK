@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', () =>{
     
 
-    document.querySelector('#follow_button').addEventListener('click', follow);
+    document.querySelector('#follow_button').addEventListener('click', (e) => {
+      window.location.reload();
+      follow();
+    });
 
     
 
@@ -21,6 +24,8 @@ function search(array, user){
 
 
 async function follow(){
+
+  console.log('follow button clicked');
     const user_to_follow_data = document.querySelector('#profile_info');
 
     const user_to_follow = user_to_follow_data.getAttribute('data-user-id');
@@ -35,54 +40,33 @@ async function follow(){
     .then(response => response.json())
     .then(user => {
       // checks if user is already following 
-      
-    if (search(user.followers, current_user) === current_user){
-      
-
+    let follow_button = document.querySelector('#follow_button');
+    if (search(user.followers, current_user) === current_user ){
+      window.location.reload();
 
       const index = user.followers.indexOf(current_user);
-      follow_button = document.querySelector('#follow_button');
-      
       user.followers.splice(index, 1);
-      let is_following = false;
-      followButton.innerHTML = is_following ? 'Unfollow' : 'Follow'
-
-      fetch(`http://127.0.0.1:8000/users/${user_to_follow}/`, {
-
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user),
-
-      })
-
+      let follower_count = user.follower_count;
+      document.querySelector('#follower_count').innerHTML = `Followers: ${follower_count}`;
+;
     }
-    if(search(user.followers, current_user.username) != current_user && follow_button.innerHTML === 'Follow'){
+    else if(search(user.followers, current_user.username) != current_user){
+      window.location.reload();
+      user.followers.push(current_user);
+      let follower_count = user.follower_count;
+      document.querySelector('#follower_count').innerHTML = `Followers: ${follower_count}`;
+  
+    }
+  fetch(`http://127.0.0.1:8000/users/${user_to_follow}/`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({followers: user.followers, follower_count: user.follower_count})
+  })
 
-    fetch(`http://127.0.0.1:8000/users/${user_to_follow}/`)
-    .then(response => response.json())
-    .then(user => {
-        user.followers.push(current_user);
-        const followButton = document.querySelector('#follow_button');
-        
-        let is_following = true;
+  console.log(user.followers);
 
-        
-
-        fetch(`http://127.0.0.1:8000/users/${user_to_follow}/`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user)
-      })
-
-      followButton.innerHTML = is_following ? 'Unfollow' : 'Follow';
-
-      })
-
-  }
 });
 
 

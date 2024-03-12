@@ -16,7 +16,8 @@ class User(AbstractUser):
             'id': self.id,
             'username': self.username,
             'following': [followers.username for followers in self.following.all()],
-            'followers': [following.username for following in self.followers.all()]        
+            'followers': [following.username for following in self.followers.all()],
+            'follower_count': self.count_followers()      
             }
 
 

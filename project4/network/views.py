@@ -36,7 +36,6 @@ def index(request):
     post_limit = paginator.get_page(page_number)
     
     
-    
     return render(request, "network/index.html", 
                   {
                       "post": post_limit,
@@ -51,6 +50,7 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
+        
 
         # Check if authentication successful
         if user is not None:
@@ -159,14 +159,13 @@ class Following(LoginRequiredMixin, TemplateView):
 @method_decorator(csrf_exempt, name='dispatch')
 class Follow_profile(View):
        
-    def get(self, user_id):
+    def get(self, request, user_id):
 
         try:
-            user_to_follow = User.objects.all().get(id = user_id)
-            self.user_to_follow = user_to_follow
+            self.user_to_follow = User.objects.get(id=user_id)
 
         except User.DoesNotExist:
-            return JsonResponse({'Error': 'User not found'}, status = 404)
+            return JsonResponse({'Error': 'User not found'}, status=404)
         
         return JsonResponse(self.user_to_follow.serialize())
 
@@ -187,9 +186,7 @@ class Follow_profile(View):
             self.user_to_follow.save()
 
         return HttpResponse(status=204)
-    
-    def post(self,request, user_id):
-        return HttpResponseRedirect(reverse('profile', args=[user_id]))
+
 
 
 @method_decorator(csrf_exempt, name='dispatch')
