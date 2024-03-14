@@ -64,15 +64,14 @@ async function like(posts, count_element)
 
 function load_posts() 
 {    
+    
     let userelement = document.querySelector('#users');
     let user = userelement.dataset.currentuser;
-
     if(user)
     {
     fetch('post/').then(response => response.json()).then(data => {
 
         data.forEach(posts => {
-            
     
         let post_Container = document.createElement('div');
         let div = document.createElement('div');
@@ -90,6 +89,8 @@ function load_posts()
 
         like_div.innerHTML = `<i style="cursor: pointer;" class="fa-regular fa-heart"></i>`;
         edit_button = document.createElement('p');
+        edit_button.id = `edit_button_${posts.postid}`;
+        edit_button.innerHTML = 'Edit';
         
 
         
@@ -99,30 +100,29 @@ function load_posts()
                         <h2><a href="profile/${posts.user_id}/">${posts.user}</a></h2>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">${posts.text}</h5>
+                        <h5 id = 'post_text_${posts.postid}' class="card-title">${posts.text}</h5>
                         <p class="card-text">Posted ${posts.date}</p> 
                         ${count_element.outerHTML} 
 
                     </div>
-                    
-                    
-                    
-                    
-                    
                 </div>`;
             like_div.addEventListener('click', () => like(posts, count_element.id));
-            edit_button.addEventListener('click', () => post_edit());   
+            edit_button.addEventListener('click', () => post_edit(post_Container, user, posts));   
                   
       
   
         
             post_Container.appendChild(div);
             post_Container.appendChild(like_div);
-            if(user.username === posts.user.username)
+            if(user === posts.user)
             {
             post_Container.appendChild(edit_button);
+
+                
+
             }
             // Append the postContainer to the active-post
+
             document.querySelector('.active-post').appendChild(post_Container);
         });
     
@@ -152,15 +152,15 @@ function load_posts()
            
         let like_button_container = document.createElement('div');
         like_button_container.classList.add('container');
-
-
+        
+        
         div.innerHTML = `
         <div>
             <div class="card post-card">
                 <h2><a href="profile/${posts.user_id}/">@${posts.user}</a></h2>
             </div>
             <div class="card-body">
-                <h5 class="card-title">${posts.text}</h5>
+                <h5 class="card-title ">${posts.text}</h5>
                 <p class="card-text">Posted ${posts.date}</p> 
             </div>
      
@@ -183,11 +183,41 @@ function load_posts()
 
 document.querySelector('.nav-link').addEventListener('click', load_posts());
 
-function post_edit()
-{
-    console.log('edit button clicked');
+function post_edit(post_Container, user, posts)
+{   
+    let edit_button = document.getElementById('edit_button_'+posts.postid);    
+    edit_button.style.display = 'none';
+    if(user === posts.user)
+    {
+    let textarea = document.createElement('textarea');
+    textarea.innerHTML = posts.text;
+    textarea.classList.add('form-control');
+    let text = document.getElementById('post_text_'+posts.postid).replaceWith(textarea)
+    let save_button = document.createElement('button');
+    save_button.innerHTML = 'Save';
+
+    save_button.classList.add('btn', 'btn-primary');
+
+    post_Container.appendChild(save_button);
+
+    save_button.addEventListener('click', () => {
+        posts.text = textarea.value;
+        fetch(`post/${posts.postid}/`, {
+            method: 'PUT',
+            body: JSON.stringify({text: posts.text})
+        });
+        text = textarea.value;
+        textarea.replaceWith(text);
+        save_button.style.display = 'none';
+
+    });
+
+
+    }
+
     
 
+
+ 
 }
-    
 });
