@@ -148,8 +148,8 @@ class Following(LoginRequiredMixin, TemplateView):
             following.append(Post.objects.all().filter(user = user))
      
         context['following'] = following
+        self.following_post = following
         return context
-
 
 
 
@@ -214,16 +214,19 @@ class Api_Post(View):
             self.post.likes.remove(user)
             self.post.save()
             return HttpResponse(status=204)
-            
-                
-
         else:
             self.post.likes.add(user)
             self.post.save()
-        return JsonResponse(self.post.serialize())
-
+        if data.get('text') != None:
         
-            
+            self.get(request, post_id)
+            data = json.loads(request.body)
+
+            self.post.text = data.get('text')
+            self.post.save()
+                
+        return JsonResponse(self.post.serialize())
+        
 
 class All_api_post(View):
     def get(self, request):
@@ -232,5 +235,15 @@ class All_api_post(View):
         except Post.DoesNotExist:
             return JsonResponse({'Error': 'Post not found'}, status = 404)
 
+        serialized_posts = [post.serialize() for post in posts]
+        return JsonResponse(serialized_posts, safe=False)
+    
+@method_decorator(csrf_exempt, name='dispatch')
+class User_post(View):
+    def get(self, request, following_id):
+        try: 
+            posts =  Post.objects.all().filter(user_id = following_id)
+        except Post.DoesNotExist:
+            return JsonResponse({'Error': 'Post not found'}, status = 404)
         serialized_posts = [post.serialize() for post in posts]
         return JsonResponse(serialized_posts, safe=False)

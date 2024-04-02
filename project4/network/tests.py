@@ -7,9 +7,8 @@ import datetime
 class NetworkTestCase(TestCase):
     def setUp(self):
         # Post table
-        user = User.objects.create(username="tyrone", password="password")
+        user = User.objects.create(username="david malan", password="password", following = "admin", followers = 'admin')
 
-        post1 = Post.objects.create(user=user, text="i like watermelon and waffles")
 
   
     def test_index_page(self):
@@ -19,6 +18,8 @@ class NetworkTestCase(TestCase):
         c.login(username = "tyrone", password = "password")
         response = c.post("/")
         self.assertEqual(response.status_code, 200)
+
+    
     
 
 if __name__ == "__main__":

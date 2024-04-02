@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    
+
 async function like(posts, count_element)
 {
     let userelement = document.querySelector('#users');
@@ -91,6 +91,7 @@ function load_posts()
         edit_button = document.createElement('p');
         edit_button.id = `edit_button_${posts.postid}`;
         edit_button.innerHTML = 'Edit';
+        edit_button.classList.add('btn', 'btn-primary');
         
 
         
@@ -186,38 +187,44 @@ document.querySelector('.nav-link').addEventListener('click', load_posts());
 function post_edit(post_Container, user, posts)
 {   
     let edit_button = document.getElementById('edit_button_'+posts.postid);    
-    edit_button.style.display = 'none';
+
+
     if(user === posts.user)
     {
-    let textarea = document.createElement('textarea');
-    textarea.innerHTML = posts.text;
-    textarea.classList.add('form-control');
-    let text = document.getElementById('post_text_'+posts.postid).replaceWith(textarea)
-    let save_button = document.createElement('button');
-    save_button.innerHTML = 'Save';
+        let textarea = document.createElement('textarea');
+        textarea.innerHTML = posts.text;
+        textarea.classList.add('form-control');
 
-    save_button.classList.add('btn', 'btn-primary');
 
-    post_Container.appendChild(save_button);
+        let oldElement = document.getElementById('post_text_'+posts.postid);
 
-    save_button.addEventListener('click', () => {
-        posts.text = textarea.value;
+        oldElement.replaceChild(textarea, oldElement.childNodes[0])
+        let save_button = document.createElement('button');
+        save_button.innerHTML = 'Save';
+
+        save_button.classList.add('btn', 'btn-primary');
+        
+        edit_button.style.visibility = 'hidden';
+
+        
+        post_Container.appendChild(save_button);
+        
+        save_button.addEventListener('click', () => {
         fetch(`post/${posts.postid}/`, {
-            method: 'PUT',
-            body: JSON.stringify({text: posts.text})
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({text: textarea.value})
+            }); 
+            oldElement.innerHTML = textarea.value;
+            save_button.style.visibility = 'hidden';
+            edit_button.style.visibility = 'visible';
         });
-        text = textarea.value;
-        textarea.replaceWith(text);
-        save_button.style.display = 'none';
 
-    });
+    }""
 
 
-    }
-
-    
-
-
- 
 }
+
 });

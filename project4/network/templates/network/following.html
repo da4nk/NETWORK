@@ -3,27 +3,128 @@
 {% block body %}
 
 
-  <div>
-  {% for follow in following %}
-<div class="card text-bg-dark">
+     
+  <div id = "current_user" data-user="{{ request.user.id }}"></div>
+  <div id = "current_username" data-username="{{ request.user }}"></div>
+  <div class = 'active-post'></div>
+<script>
+
+
+async function like(posts, count_element) {
+
   
+  
+let user = document.querySelector('#current_username').dataset.username
 
-    {% for i in follow %}
-    <div class="card-body">
-      <h5 class="card-title"> <a href="{% url 'profile' i.user.id %}">{{ i.user }}</a></h5>
-      <p class="card-text">{{ i.text }}</p>
-      <p class="card-text"><small> {{ i.date}}</small></p>
-      <h4> {{ i.count_likes }}</h4>
-      <i id = "like_button" class="fa-regular fa-heart"></i> {{posts.count_likes}}
+  if (search(posts.likes, user) === -1) {
+      posts.likes.push(user);
+      posts.like_count += 1;        
+  }
+  else if (search(posts.likes, user) === user) {
 
-      
-      </div>
-    {% endfor %}
-</div>
+      posts.likes.splice(posts.likes.indexOf(user), 1);
+      posts.like_count -= 1;
+  }
+  let url = `/post/${posts.postid}/`;
+  try{
+      const response = await fetch(url, {
+          method: 'PUT',
+          body: JSON.stringify({likes: posts.likes, like_count: posts.like_count})
+      });
+      if(!response.ok){
+          throw new Error('Error');
+      } 
+      else  // if response ok
+      {            
+        const updatedCountElement = document.getElementById(count_element);
+            if(updatedCountElement){
+                updatedCountElement.innerHTML = posts.like_count;
+            }
 
-  {% endfor %}
-</div>
+
+      }
+  }
+  catch(error){
+      console.log(error);
+  }
 
 
 
+} 
+
+
+
+
+
+
+
+
+function search(array, user) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i] === user) {
+            return user;
+        }
+    }
+    return -1;
+}
+
+
+    let current_user = document.querySelector('#current_user').dataset.user;
+    fetch(`/users/${current_user}/`,
+    {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(response => response.json()).then(data => {
+        fetch(`/following_post/${data.following_id}/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }).then(response => response.json()).then(posts => {
+          posts.forEach(post => {
+
+            const postElement = document.createElement('div');
+            const like_button = document.createElement('button');
+            let count_element = document.createElement('p');
+            count_element.id = `likeCount_${post.postid}`;
+            count_element.innerHTML = post.like_count;
+            
+
+            like_button.style.backgroundColor = "transparent";
+            like_button.innerHTML = `<i style="cursor: pointer;" class="fa-regular fa-heart"></i>`;
+            
+            postElement.innerHTML = `
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">${post.user}</h5>
+                <p class="card-text">${post.text}</p>
+                <p class="card-text">posted on ${post.date}</p>
+                <div class="d-flex align-items-center">
+                  
+                  <p class="card-text">${count_element.outerHTML}</p>
+          
+              </div>
+            </div>
+            `;
+            postElement.append(like_button)
+            like_button.addEventListener('click', () => like(post, count_element.id));
+
+            document.querySelector('.active-post').append(postElement);
+
+
+          });
+          
+
+
+        });
+
+    
+    });
+
+
+
+
+</script>
 {% endblock %} 
