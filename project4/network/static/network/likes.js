@@ -8,10 +8,12 @@ function search(array, user) {
 }
 
 
-document.addEventListener('DOMContentLoaded', () => {
 
-
-
+document.addEventListener('DOMContentLoaded', () =>
+{
+    document.querySelector('#post_link').addEventListener('click', load_posts())    
+    
+});
 
 async function like(posts, count_element)
 {
@@ -62,18 +64,24 @@ async function like(posts, count_element)
 
 
 
-function load_posts() 
+function load_posts(currentpage) 
 {    
     
     let userelement = document.querySelector('#users');
-    let user = userelement.dataset.currentuser;
-    if(user)
-    {
-    fetch('post/').then(response => response.json()).then(data => {
-
-        data.forEach(posts => {
     
-        let post_Container = document.createElement('div');
+    let post_Container = document.createElement('div');
+    post_Container.innerHTML = ' ';
+    const paginationContainer = document.querySelector('.pagination');
+    paginationContainer.innerHTML = '';
+
+
+    if(userelement)
+    {
+        user = userelement.dataset.currentuser;
+    fetch(`post/?page=${currentpage}`).then(response => response.json()).then(data => {
+        let innerdata = data.post;
+        innerdata.forEach(posts => {
+    
         let div = document.createElement('div');
         
     
@@ -104,7 +112,7 @@ function load_posts()
                         <h5 id = 'post_text_${posts.postid}' class="card-title">${posts.text}</h5>
                         <p class="card-text">Posted ${posts.date}</p> 
                         ${count_element.outerHTML} 
-
+                        
                     </div>
                 </div>`;
             like_div.addEventListener('click', () => like(posts, count_element.id));
@@ -112,28 +120,29 @@ function load_posts()
                   
       
   
-        
             post_Container.appendChild(div);
             post_Container.appendChild(like_div);
             if(user === posts.user)
             {
             post_Container.appendChild(edit_button);
-
-                
-
             }
             // Append the postContainer to the active-post
 
             document.querySelector('.active-post').appendChild(post_Container);
+            paginate(data.total_pages);
+            console.log(data.total_pages);
+    
         });
+     
     
         });
     }
     else
     {
-    fetch('post/').then(response => response.json()).then(data => {
+    fetch(`post/?page=${currentpage}`).then(response => response.json()).then(data => {
+        let innerdata = data.post;
 
-        data.forEach(posts => {
+        innerdata.forEach(posts => {
 
         let count_element = document.createElement('p');
         count_element.id = `likeCount_${posts.postid}`;
@@ -172,23 +181,25 @@ function load_posts()
         post_Container.appendChild(div);
         post_Container.appendChild(like_div);
         document.querySelector('.active-post').appendChild(post_Container);
+        paginate(data.total_pages);
+
    
         });
     });
+
     }
+
     }
 
 
 
 
 
-document.querySelector('.nav-link').addEventListener('click', load_posts());
 
 function post_edit(post_Container, user, posts)
 {   
     let edit_button = document.getElementById('edit_button_'+posts.postid);    
-
-
+    
     if(user === posts.user)
     {
         let textarea = document.createElement('textarea');
@@ -221,10 +232,36 @@ function post_edit(post_Container, user, posts)
             save_button.style.visibility = 'hidden';
             edit_button.style.visibility = 'visible';
         });
+    }
+}
+function paginate(TotalPages)
+{
+    const pagination_container = document.querySelector('.pagination');
 
-    }""
+    pagination_container.innerHTML = ' ';
 
+    for(let i = 1; i <= TotalPages; i++)
+    {
+        const page = document.createElement('a');
+        page.textContent = `page ${i}`;
+        page.href = '#';
+        page.classList.add('p-4','m2');
+        
+        page.addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+            load_posts(i);
+            document.querySelector(".active-post").innerHTML = '';
+        });
+        pagination_container.appendChild(page);
 
+    }
+    
 }
 
-});
+
+
+
+
+
+

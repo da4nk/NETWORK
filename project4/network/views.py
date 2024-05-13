@@ -30,15 +30,10 @@ class LoginRequired(LoginRequiredMixin):
 def index(request):
     posts = Post.objects.all().order_by('-date')
 
-
-    paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
-    post_limit = paginator.get_page(page_number)
     
     
     return render(request, "network/index.html", 
                   {
-                      "post": post_limit,
                       "posts": posts
                   })
 
@@ -231,12 +226,18 @@ class Api_Post(View):
 class All_api_post(View):
     def get(self, request):
         try:
-            posts = Post.objects.all()
+            posts = Post.objects.all().order_by('-date')
+            paginator = Paginator(posts, 10) 
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            
+            total_pages = paginator.num_pages  # Total number of pages
+
         except Post.DoesNotExist:
             return JsonResponse({'Error': 'Post not found'}, status = 404)
 
-        serialized_posts = [post.serialize() for post in posts]
-        return JsonResponse(serialized_posts, safe=False)
+        serialized_posts = [post.serialize() for post in page_obj]
+        return JsonResponse({'post' : serialized_posts, 'total_pages': total_pages}, safe=False)
     
 @method_decorator(csrf_exempt, name='dispatch')
 class User_post(View):

@@ -7,7 +7,9 @@
 
 <div  class="card text-center" >
     <div class="card-body">
-      <h5  class="card-header">{{user_profile}}</h5>
+      {% if user_profile == request.user %}
+
+      <h5  class="card-header">your profile</h5>
          <nav aria-label="breadcrumb">
 
         <ol class="breadcrumb">
@@ -15,21 +17,23 @@
           <li  id = "follower_count"class="breadcrumb-item active">Followers: {{user_profile.count_followers}}</li>
           <li class="breadcrumb-item active">Following: {{user_profile.count_following}}</li>
         </ol>
-        {% if user_profile == request.user %}
-
         {% else %}
+        
+        <h5  class="card-header">{{ user_profile}}</h5>
+        
       <ol class="nav-item">
         <div id="profile_info" data-user-id = "{{user_profile.id }}"></div>
         <div id="user" data-current-user = "{{ request.user }}" data-current-id = "{{request.user.id}}"></div>
         
           {% csrf_token %}
-        
+          {% if request.user.is_authenticated %}
           {% if request.user in user_to_follow_followers %}
-          <button  id = "follow_button"  class=" btn btn-primary"  >UnFollow</button>
+          <button  id = "follow_button"  class=" btn btn-primary">UnFollow</button>
 
           {% elif request.user not in user_to_follow_followers %}
           <button  id = "follow_button"  class=" btn btn-primary"  >Follow</button>
 
+          {% endif %}
           {% endif %}
 
       </ol>

@@ -70,6 +70,7 @@ function search(array, user) {
 
 
     let current_user = document.querySelector('#current_user').dataset.user;
+
     fetch(`/users/${current_user}/`,
     {
         method: 'GET',
@@ -77,45 +78,50 @@ function search(array, user) {
             'Content-Type': 'application/json',
         }
     }).then(response => response.json()).then(data => {
-        fetch(`/following_post/${data.following_id}/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }).then(response => response.json()).then(posts => {
-          posts.forEach(post => {
 
-            const postElement = document.createElement('div');
-            const like_button = document.createElement('button');
-            let count_element = document.createElement('p');
-            count_element.id = `likeCount_${post.postid}`;
-            count_element.innerHTML = post.like_count;
+          data.following_id.forEach(l => {
+  
+          fetch(`/following_post/${l}/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }).then(response => response.json()).then(posts => {
+            posts.forEach(post => {
+  
+              const postElement = document.createElement('div');
+              const like_button = document.createElement('button');
+              let count_element = document.createElement('p');
+              count_element.id = `likeCount_${post.postid}`;
+              count_element.innerHTML = post.like_count;
+              
+  
+              like_button.style.backgroundColor = "transparent";
+              like_button.innerHTML = `<i style="cursor: pointer;" class="fa-regular fa-heart"></i>`;
+              
+              postElement.innerHTML = `
+              <div class="card">
+                <div class="card-body">
+                   <h2><a href="/profile/${post.user_id}/">${post.user}</a></h2>
+  
+                  <p class="card-text">${post.text}</p>
+                  <p class="card-text">posted on ${post.date}</p>
+                  <div class="d-flex align-items-center">
+                    
+                    <p class="card-text">${count_element.outerHTML}</p>
             
-
-            like_button.style.backgroundColor = "transparent";
-            like_button.innerHTML = `<i style="cursor: pointer;" class="fa-regular fa-heart"></i>`;
-            
-            postElement.innerHTML = `
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">${post.user}</h5>
-                <p class="card-text">${post.text}</p>
-                <p class="card-text">posted on ${post.date}</p>
-                <div class="d-flex align-items-center">
-                  
-                  <p class="card-text">${count_element.outerHTML}</p>
-          
+                </div>
               </div>
-            </div>
-            `;
-            postElement.append(like_button)
-            like_button.addEventListener('click', () => like(post, count_element.id));
-
-            document.querySelector('.active-post').append(postElement);
-
-
-          });
-          
+              `;
+              postElement.append(like_button)
+              like_button.addEventListener('click', () => like(post, count_element.id));
+  
+              document.querySelector('.active-post').append(postElement);
+  
+  
+            });
+            
+});
 
 
         });

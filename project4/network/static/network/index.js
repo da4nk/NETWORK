@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', () =>{
     
 
     document.querySelector('#follow_button').addEventListener('click', (e) => {
-      window.location.reload();
+      const followButton = e.target;
+
+      followButton.innerHTML = (followButton.innerHTML === 'Follow') ? 'Unfollow' : 'Follow';
+
       follow();
     });
 
@@ -25,7 +28,6 @@ function search(array, user){
 
 async function follow(){
 
-  console.log('follow button clicked');
     const user_to_follow_data = document.querySelector('#profile_info');
 
     const user_to_follow = user_to_follow_data.getAttribute('data-user-id');
@@ -34,33 +36,20 @@ async function follow(){
 
     const current_user = current_user_data.getAttribute('data-current-user');
 
-
-
     fetch(`http://127.0.0.1:8000/users/${user_to_follow}/`)
     .then(response => response.json())
     .then(user => {
       // checks if user is already following 
-      
+  
     let follow_button = document.querySelector('#follow_button');
     if (search(user.followers, current_user) === current_user ){
-      window.location.reload();
       const index = user.followers.indexOf(current_user);
       user.followers.splice(index, 1);
       user.follower_count -= 1;
-      follow_button.innerHTML = 'Follow'
-
-      
-;
     }
-    else if(search(user.followers, current_user.username) != current_user){
-      window.location.reload();
+    else{
       user.followers.push(current_user);
       user.follower_count += 1;
-      follow_button.innerHTML = 'Unfollow';
-
-
-      
-  
     }
 
     fetch(`http://127.0.0.1:8000/users/${user_to_follow}/`, {

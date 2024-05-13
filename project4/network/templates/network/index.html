@@ -5,7 +5,11 @@
 {% if user.is_authenticated %}
 <div class = "card p-4">
     <!--  -->
-  <div id = "user " data-current-user="{{ request.user.id }}"></div>
+  {% if request.user.is_authenticated %}
+  <div id = "users" data-currentuser="{{ request.user }}"></div>
+  {% else %}
+  <div></div>
+  {% endif %}
     <form action="{% url 'create'  %}" method = "post">
         {% csrf_token %}
         <div class="card-body">
@@ -22,11 +26,15 @@
     {% endif %}
 
 </div>
-<div id = "users" data-currentuser="{{request.user}}"></div>
+<div data-post-id="{{posts.id}}"></div>
 
-<div class = active-post>
+<div class = "p-4 active-post"></div>
+  
+<div class="pagination">
+
   
 </div>
-<script src="{% static 'network/likes.js' %}"></script>
+
+
 
 {% endblock %} 
